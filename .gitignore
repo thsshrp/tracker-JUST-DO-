@@ -1,23 +1,24 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Виртуальные окружения (у каждого в команде оно будет свое)
+venv/
+env/
+.env/
+.venv/
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# Кэш Питона (генерируется автоматически, засоряет репозиторий)
+__pycache__/
+*.py[cod]
+*$py.class
 
-# testing
-/coverage
-
-# production
-/build
-
-# misc
-.DS_Store
+# Файлы с секретами, паролями и ключами (ОЧЕНЬ ВАЖНО не заливать их)
+.env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.secret
 
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Локальные базы данных (если будете использовать SQLite на старте)
+*.sqlite3
+db.sqlite3
+
+# Всякие системные штуки (Mac/Windows)
+.DS_Store
+Thumbs.db
+node_modules
