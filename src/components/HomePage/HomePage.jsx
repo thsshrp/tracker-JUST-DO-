@@ -70,7 +70,7 @@ const HomePage = () => {
   const days = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
   const emptyCells = Array(6).fill(null);
   const dates = Array.from({ length: 30 }, (_, i) => i + 1);
-  const currentDay = 12; 
+  const currentDay = 1; 
 
   const displayTasks = tasks;
 
@@ -80,7 +80,7 @@ const HomePage = () => {
       <div className="calendar-section">
         <div className="calendar-header">
           <button className="nav-arrow">◀</button>
-          <h2>НОЯБРЬ 2026</h2>
+          <h2>МАРТ 2026</h2>
           <button className="nav-arrow">▶</button>
         </div>
         <div className="week-days">
