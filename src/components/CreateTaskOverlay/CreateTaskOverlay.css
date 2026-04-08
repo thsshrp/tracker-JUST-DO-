@@ -1,0 +1,240 @@
+/* Затемнение заднего фона */
+.overlay-backdrop {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+  
+  /* =========================================
+     1. ВЫЕЗЖАЮЩАЯ ПАНЕЛЬ ВВОДА ЗАДАЧИ
+     ========================================= */
+  .task-input-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 393px;
+    height: 128px;
+    background-color: #1F1E27;
+    border-radius: 20px 20px 0 0;
+    z-index: 1000;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    transition: height 0.3s ease;
+  }
+  
+.quick-date-btn {
+  background: #2c2a36;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.quick-date-btn:hover {
+  background: #3e3c4a;
+}
+
+  .task-input-sheet.expanded {
+    height: 202px;
+  }
+  
+  .main-task-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    margin-bottom: 20px;
+  }
+  
+  .main-task-input::placeholder {
+    color: rgba(213, 213, 213, 0.6); /* D5D5D5 opacity 60% */
+  }
+  
+  /* Строка подзадачи */
+  .subtask-input-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    animation: slideDown 0.2s ease-out;
+  }
+  
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .subtask-checkbox {
+    width: 18px; height: 18px;
+    border: 2px solid #808080;
+    border-radius: 4px;
+    margin-right: 12px;
+  }
+  
+  .subtask-input {
+    flex-grow: 1;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+  }
+  .subtask-input::placeholder { color: rgba(213, 213, 213, 0.6); }
+  
+  .remove-subtask-btn {
+    background: none; border: none; cursor: pointer;
+    opacity: 0.6;
+  }
+  
+  /* Тулбар (Иконки и кнопка) */
+  .input-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto; /* Прижимаем вниз */
+    padding-bottom: 10px;
+  }
+  
+  .toolbar-icons {
+    display: flex;
+    gap: 16px;
+  }
+  .toolbar-icons button {
+    background: none; border: none; cursor: pointer; padding: 0;
+    opacity: 0.8; transition: 0.2s;
+  }
+  .toolbar-icons button:hover { opacity: 1; }
+  
+  .submit-task-btn {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background-color: #489A78;
+    color: white; font-size: 24px;
+    border: none; cursor: pointer;
+  }
+  
+  /* =========================================
+     2. ОКНО КАЛЕНДАРЯ
+     ========================================= */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex; justify-content: center; align-items: center;
+    z-index: 1001; /* Поверх инпута */
+  }
+  
+  .calendar-modal-content {
+    width: 348px;
+    height: 671px;
+    background-color: #1D1C25;
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Кнопки Быстрых дат (90x35) */
+  .quick-dates-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    margin-bottom: 30px;
+  }
+  .quick-date-btn {
+    width: 90px; height: 35px;
+    background-color: #23222B;
+    border-radius: 10px;
+    border: none; color: #fff;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  
+  /* Длинные кнопки настроек (333x35) */
+  .settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+  .setting-row-btn {
+    width: 333px; height: 35px;
+    background-color: #23222B;
+    border-radius: 10px;
+    border: none; color: #fff;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 16px; cursor: pointer;
+  }
+  .setting-left {
+    display: flex; align-items: center; gap: 12px; font-size: 14px;
+  }
+  .setting-icon {
+    width: 20px; height: 20px;
+    filter: brightness(0) invert(70%); /* Делает иконку цвета 9C9C9C */
+  }
+  .setting-value { color: #808080; font-size: 13px; text-transform: lowercase; }
+  
+  /* Подвал окна */
+  .modal-footer {
+    margin-top: auto;
+    display: flex; justify-content: flex-end; gap: 24px;
+  }
+  .footer-btn-cancel {
+    background: none; border: none; color: #fff; font-weight: 600; cursor: pointer;
+  }
+  .footer-btn-done {
+    background: none; border: none; color: #489A78; font-weight: 600; cursor: pointer;
+  }
+  
+  /* =========================================
+     3. ОКНО ПОВТОРОВ
+     ========================================= */
+  .nested-overlay {
+    background: rgba(0,0,0,0.4);
+    z-index: 1002; /* Поверх календаря */
+  }
+  .repeat-modal-content {
+    width: 348px; height: 190px;
+    background-color: #1D1C25;
+    border-radius: 20px;
+    padding: 24px;
+  }
+  .repeat-header {
+    display: flex; justify-content: space-between; align-items: center;
+    color: #fff; font-size: 14px; margin-bottom: 30px;
+  }
+  .repeat-options {
+    display: flex; justify-content: space-between;
+  }
+  
+  /* Мини календарь (упрощенная верстка для модалки) */
+  .mini-calendar-header { display: flex; justify-content: center; gap: 15px; color: #fff; margin-bottom: 20px; font-weight: bold;}
+  .mini-calendar-header button { background: none; border: none; color: #fff; }
+  .mini-week-days { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; color: #808080; font-size: 12px; margin-bottom: 10px;}
+  .mini-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px 0; text-align: center; color: #fff;}
+  .mini-date-cell { width: 32px; height: 32px; margin: 0 auto; display: flex; justify-content: center; align-items: center; border-radius: 6px; }
+  .mini-date-cell.selected { border: 1px solid #489A78; }
+  
+  /* Простой тумблер */
+  .toggle-switch { width: 40px; height: 22px; background: #23222B; border-radius: 12px; position: relative; cursor: pointer; }
+  .toggle-switch.active { background: #489A78; }
+  .toggle-knob { width: 18px; height: 18px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: 0.2s; }
+  .toggle-switch.active .toggle-knob { transform: translateX(18px); }
+
+  .color-palette {
+    position: absolute;
+    bottom: 40px; left: -20px;
+    background-color: #23222B;
+    padding: 8px; border-radius: 12px;
+    display: flex; gap: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  }
+  .color-swatch {
+    width: 20px; height: 20px; border-radius: 50%; cursor: pointer;
+  }
+  .quick-date-btn.active { border: 1px solid #489A78; }
