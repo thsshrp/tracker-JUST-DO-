@@ -1,0 +1,97 @@
+/* Делаем так, чтобы внутренние отступы (padding) не ломали ширину блоков */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: #0a0a0f; /* Темный фон вокруг телефона */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Наш главный мобильный экран */
+.container {
+  width: 100%;
+  max-width: 430px; /* Фиксируем максимальную ширину как у iPhone */
+  margin: 0 auto; /* Эта магия центрирует блок на экране монитора 100% надежно */
+  min-height: 100vh;
+  background-color: #1c1c24;
+  position: relative;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.9); /* Добавляем тень для красоты */
+}
+
+/* ГЛОБАЛЬНЫЕ СТИЛИ ДЛЯ НИЖНЕЙ ПАНЕЛИ */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  
+  /* 1. Делаем панель тоньше и аккуратнее */
+  height: 65px; 
+  
+  /* 2. Ограничиваем ширину */
+  width: 100%;
+  max-width: 400px; /* <--- ЕСЛИ ВСЁ ЕЩЕ ВЫПИРАЕТ, СДЕЛАЙ ТУТ 390px ИЛИ 375px */
+  left: 50%;
+  transform: translateX(-50%);
+  
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    background-color: #1D1C25; 
+    /* 1. Делаем панель тоньше и аккуратнее */
+    height: 65px; 
+    
+    /* 2. Ограничиваем ширину */
+    width: 100%;
+    max-width: 400px; /* <--- ЕСЛИ ВСЁ ЕЩЕ ВЫПИРАЕТ, СДЕЛАЙ ТУТ 390px ИЛИ 375px */
+    left: 50%;
+    transform: translateX(-50%);
+    
+    background-color: #1D1C25; 
+    display: flex;
+    justify-content: space-around; 
+    align-items: center;
+    z-index: 100; 
+  }
+  display: flex;
+  justify-content: space-around; 
+  align-items: center;
+  z-index: 100; 
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1; 
+  height: 100%;
+}
+
+.nav-icon {
+  width: 28px;  
+  height: 28px; 
+  object-fit: contain; 
+  flex-shrink: 0; /* Это правило навсегда спасет иконки от сплющивания на любой странице */
+}
+
+/* Универсальная логика неонового свечения для любой активной вкладки */
+.nav-item.active .nav-icon {
+  filter: drop-shadow(0px 0px 8px rgba(72, 154, 120, 0.9));
+}
+/* ГЛОБАЛЬНО ПРЯЧЕМ БЕЛЫЙ СКРОЛЛБАР (для эффекта мобильного приложения) */
+
+/* Для Chrome, Safari, Edge, Opera */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+  display: none;
+}
+
+/* Для Firefox и старых браузеров */
+html, body, * {
+  scrollbar-width: none; 
+  -ms-overflow-style: none; 
+}
