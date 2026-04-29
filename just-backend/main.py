@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 import sqlite3
 import json
-from datetime import date
+from datetime import date, datetime, timedelta
 
 app = FastAPI()
 
@@ -22,17 +22,33 @@ conn = sqlite3.connect("tasks.db", check_same_thread=False)
 conn.row_factory = sqlite3.Row
 cursor = conn.cursor()
 
+# Таблица задач
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS tasks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         text TEXT NOT NULL,
         color TEXT,
         repeat_setting TEXT,
-        due_date TEXT,  -- YYYY-MM-DD
-        subtasks TEXT,  -- JSON
+        due_date TEXT,  
+        subtasks TEXT,  
         is_completed BOOLEAN DEFAULT 0
     )
 ''')
+
+# Таблица пользователя
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        avatar TEXT
+    )
+''')
+
+# Если пользователей нет, создаем базового
+cursor.execute("SELECT COUNT(*) FROM users")
+if cursor.fetchone()[0] == 0:
+    cursor.execute("INSERT INTO users (name, avatar) VALUES (?, ?)", ("Анонимный Лид", ""))
+
 conn.commit()
 
 # --- Pydantic модели ---
@@ -60,6 +76,9 @@ class TaskResponse(BaseModel):
     dueDate: Optional[str]
     subtasks: List[dict]
     isCompleted: bool
+
+class UserUpdate(BaseModel):
+    name: str
 
 # --- Эндпоинты для задач ---
 @app.get("/api/tasks", response_model=List[TaskResponse])
@@ -116,24 +135,50 @@ async def delete_task(task_id: int):
     conn.commit()
     return {"ok": True}
 
-# --- Профиль (оставляем как есть) ---
+# --- Профиль (Динамический расчет статистики) ---
 @app.get("/api/profile")
 async def get_profile():
+    # 1. Берем данные пользователя (ID 1)
+    cursor.execute("SELECT name, avatar FROM users WHERE id = 1")
+    user_row = cursor.fetchone()
+    
+    # 2. Считаем общую статистику из таблицы tasks
+    cursor.execute("SELECT COUNT(*) FROM tasks WHERE is_completed = 1")
+    total_completed = cursor.fetchone()[0]
+    
+    today_str = date.today().isoformat()
+    # Просроченные: не выполнены и дата меньше сегодняшней
+    cursor.execute("SELECT COUNT(*) FROM tasks WHERE is_completed = 0 AND due_date < ?", (today_str,))
+    total_overdue = cursor.fetchone()[0]
+    
+    # 3. Формируем график за последние 7 дней
+    week_chart_data = []
+    days_map = {0: 'пн', 1: 'вт', 2: 'ср', 3: 'чт', 4: 'пт', 5: 'сб', 6: 'вс'}
+    
+    for i in range(6, -1, -1):
+        day_date = datetime.now() - timedelta(days=i)
+        day_str = day_date.strftime("%Y-%m-%d")
+        day_name = days_map[day_date.weekday()]
+        
+        # Считаем выполненные задачи за конкретный день
+        cursor.execute("SELECT COUNT(*) FROM tasks WHERE is_completed = 1 AND due_date = ?", (day_str,))
+        count = cursor.fetchone()[0]
+        week_chart_data.append({"name": day_name, "tasks": count})
+
+    # 4. Средние показатели (упрощенный расчет)
+    avg_per_day = round(total_completed / 7, 1) if total_completed > 0 else 0
+    avg_per_week = total_completed
+
     return {
-        "name": "Имя пользователя",
-        "avatar": "",
+        "name": user_row["name"],
+        "avatar": user_row["avatar"] if user_row["avatar"] else "",
         "stats": {
-            "totalCompleted": 20,
-            "totalOverdue": 23,
-            "avgPerDay": 3,
-            "avgPerWeek": 22,
+            "totalCompleted": total_completed,
+            "totalOverdue": total_overdue,
+            "avgPerDay": avg_per_day,
+            "avgPerWeek": avg_per_week,
         },
-        "weekChartData": [
-            {"name": "пн", "tasks": 0}, {"name": "вт", "tasks": 4},
-            {"name": "ср", "tasks": 0}, {"name": "чт", "tasks": 6},
-            {"name": "пт", "tasks": 5}, {"name": "сб", "tasks": 7},
-            {"name": "вс", "tasks": 9}
-        ],
+        "weekChartData": week_chart_data,
         "monthChartData": [
             {"name": "1", "tasks": 0}, {"name": "5", "tasks": 4},
             {"name": "10", "tasks": 5.5}, {"name": "15", "tasks": 6},
@@ -141,3 +186,9 @@ async def get_profile():
             {"name": "30", "tasks": 8}
         ]
     }
+
+@app.put("/api/profile/name")
+async def update_user_name(user_data: UserUpdate):
+    cursor.execute("UPDATE users SET name = ? WHERE id = 1", (user_data.name,))
+    conn.commit()
+    return {"ok": True, "newName": user_data.name}
