@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+// ProfilePage.jsx
+import React, { useState, useEffect, useRef } from 'react';
 import './ProfilePage.css';
 import { useNavigate } from 'react-router-dom';
-
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
-// НОВЫЕ ПУТИ К ИКОНКАМ
 import TasksIcon from '../../assets/icons/TasksIcon.svg';
 import CalendarIcon from '../../assets/icons/CalendarIcon.svg';
 import NetworkIcon from '../../assets/icons/NetworkIcon.svg';
@@ -14,25 +13,84 @@ import RedactAvaSvg from '../../assets/icons/RedactAva.svg';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
 
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [avatarUploading, setAvatarUploading] = useState(false);
 
   useEffect(() => {
     fetch('http://localhost:8000/api/profile')
-      .then((response) => response.json()) 
+      .then((response) => response.json())
       .then((data) => {
         if (!data.avatar) {
           data.avatar = AvaSvg;
         }
-        setUserData(data); 
-        setIsLoading(false); 
+        setUserData(data);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.error('Ошибка при получении данных:', error);
         setIsLoading(false);
       });
   }, []);
+
+  const handleEditAvatarClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleAvatarChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Проверка типа файла (опционально)
+    if (!file.type.startsWith('image/')) {
+      alert('Пожалуйста, выберите изображение');
+      return;
+    }
+
+    // Проверка размера (например, до 5 МБ)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Размер изображения не должен превышать 5 МБ');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    setAvatarUploading(true);
+
+    try {
+      const response = await fetch('http://localhost:8000/api/profile/avatar', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Ошибка загрузки аватара');
+      }
+
+      const result = await response.json();
+      // Предполагается, что сервер возвращает новый URL аватара в поле `avatar`
+      const newAvatarUrl = result.avatar || URL.createObjectURL(file);
+      
+      setUserData(prev => ({
+        ...prev,
+        avatar: newAvatarUrl
+      }));
+      
+      alert('Аватар успешно обновлён');
+    } catch (error) {
+      console.error('Ошибка при загрузке аватара:', error);
+      alert('Не удалось обновить аватар. Попробуйте позже.');
+    } finally {
+      setAvatarUploading(false);
+      // Сброс значения input, чтобы можно было загрузить тот же файл повторно
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   if (isLoading) {
     return (
@@ -56,13 +114,26 @@ const ProfilePage = () => {
       <div className="profile-header">
         <div className="avatar-container">
           <img src={userData.avatar} alt="Аватар" className="profile-avatar" />
-          <button className="edit-avatar-btn">
+          <button 
+            className="edit-avatar-btn" 
+            onClick={handleEditAvatarClick}
+            disabled={avatarUploading}
+            style={{ opacity: avatarUploading ? 0.6 : 1 }}
+          >
             <img src={RedactAvaSvg} alt="Редактировать" />
           </button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            accept="image/*"
+            onChange={handleAvatarChange}
+          />
         </div>
         <h1 className="profile-name">{userData.name}</h1>
       </div>
 
+      {/* … остальная часть компонента без изменений … */}
       {/* РЯД СТАТИСТИКИ 1 */}
       <div className="stats-row">
         <div className="stat-card">
@@ -84,14 +155,7 @@ const ProfilePage = () => {
               <XAxis dataKey="name" stroke="#5C5B66" tick={{fill: '#FFFFFF', fontSize: 10}} axisLine={{stroke: '#5C5B66'}} tickLine={false} />
               <YAxis stroke="#5C5B66" tick={{fill: '#FFFFFF', fontSize: 10}} axisLine={{stroke: '#5C5B66'}} tickLine={false} />
               <Tooltip cursor={false} contentStyle={{ display: 'none' }} />
-              <Line 
-                type="monotone" 
-                dataKey="tasks" 
-                stroke="#489A78" 
-                strokeWidth={2} 
-                dot={false} 
-                className="neon-line-green" 
-              />
+              <Line type="monotone" dataKey="tasks" stroke="#489A78" strokeWidth={2} dot={false} className="neon-line-green" />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -118,14 +182,7 @@ const ProfilePage = () => {
               <XAxis dataKey="name" stroke="#5C5B66" tick={{fill: '#FFFFFF', fontSize: 10}} axisLine={{stroke: '#5C5B66'}} tickLine={false} />
               <YAxis stroke="#5C5B66" tick={{fill: '#FFFFFF', fontSize: 10}} axisLine={{stroke: '#5C5B66'}} tickLine={false} />
               <Tooltip cursor={false} contentStyle={{ display: 'none' }} />
-              <Line 
-                type="monotone" 
-                dataKey="tasks" 
-                stroke="#FF4B2B" 
-                strokeWidth={2} 
-                dot={false}
-                className="neon-line-orange" 
-              />
+              <Line type="monotone" dataKey="tasks" stroke="#FF4B2B" strokeWidth={2} dot={false} className="neon-line-orange" />
             </LineChart>
           </ResponsiveContainer>
         </div>

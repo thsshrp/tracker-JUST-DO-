@@ -22,6 +22,13 @@ const TaskItem = ({ task, onToggle }) => {
   const [isOpen, setIsOpen] = useState(false);
   const hasSubtasks = task.subtasks && task.subtasks.length > 0;
 
+  // Стили для выполненной задачи
+  const taskStyle = {
+    textDecoration: task.isCompleted ? 'line-through' : 'none',
+    opacity: task.isCompleted ? 0.5 : 1,
+    transition: 'all 0.3s ease'
+  };
+
   if (!hasSubtasks) {
     return (
       <div className="task-card single-task">
@@ -29,7 +36,7 @@ const TaskItem = ({ task, onToggle }) => {
           <input type="checkbox" checked={task.isCompleted} onChange={() => onToggle(task.id, task.isCompleted)} />
           <span className="checkmark"></span>
         </label>
-        <span className="task-title" style={{ textDecoration: task.isCompleted ? 'line-through' : 'none' }}>{task.text}</span>
+        <span className="task-title" style={taskStyle}>{task.text}</span>
         <div className="task-color-dot" style={{ backgroundColor: task.color }}></div>
       </div>
     );
@@ -43,7 +50,7 @@ const TaskItem = ({ task, onToggle }) => {
             <input type="checkbox" checked={task.isCompleted} onChange={() => onToggle(task.id, task.isCompleted)} />
             <span className="checkmark"></span>
           </label>
-          <span className="group-title" style={{ textTransform: 'none', textDecoration: task.isCompleted ? 'line-through' : 'none' }}>{task.text}</span>
+          <span className="group-title" style={taskStyle}>{task.text}</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div className="task-color-dot" style={{ backgroundColor: task.color }}></div>
@@ -55,7 +62,7 @@ const TaskItem = ({ task, onToggle }) => {
           {task.subtasks.map((sub, index) => (
             <div key={index} className="subtask-row">
               <label className="custom-checkbox">
-                <input type="checkbox" />
+                <input type="checkbox" checked={sub.isCompleted} readOnly />
                 <span className="checkmark"></span>
               </label>
               <span className="task-title">{sub.text}</span>

@@ -7,7 +7,7 @@ export const TaskProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Загрузка задач с сервера
+  // Загрузка задач
   useEffect(() => {
     fetch(API_URL)
       .then(res => res.json())
@@ -21,7 +21,6 @@ export const TaskProvider = ({ children }) => {
       });
   }, []);
 
-  // Добавление задачи
   const addTask = async (newTask) => {
     try {
       const response = await fetch(API_URL, {
@@ -36,7 +35,6 @@ export const TaskProvider = ({ children }) => {
     }
   };
 
-  // Переключение выполнения задачи
   const toggleTask = async (taskId, currentStatus) => {
     try {
       const response = await fetch(`${API_URL}/${taskId}/toggle`, {
@@ -53,8 +51,19 @@ export const TaskProvider = ({ children }) => {
     }
   };
 
+  const deleteTask = async (taskId) => {
+    try {
+      const response = await fetch(`${API_URL}/${taskId}`, { method: 'DELETE' });
+      if (response.ok) {
+        setTasks(prev => prev.filter(task => task.id !== taskId));
+      }
+    } catch (error) {
+      console.error('Ошибка удаления:', error);
+    }
+  };
+
   return (
-    <TaskContext.Provider value={{ tasks, loading, addTask, toggleTask }}>
+    <TaskContext.Provider value={{ tasks, loading, addTask, toggleTask, deleteTask }}>
       {children}
     </TaskContext.Provider>
   );
