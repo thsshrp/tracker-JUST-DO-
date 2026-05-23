@@ -8,13 +8,13 @@
 - Зарипов Адель
 
 ## Стек технологий
-- **Backend:** Python (например, FastAPI или Flask)
-- **Frontend:** 
+- **Backend:** Python Fast API
+- **Frontend:** React JS
 - **База данных:** Supabase
 
 ## 🚀 Что уже реализовано (План)
 - [x] Подготовка репозитория (Git, .gitignore, README)
-- [ ] Проектирование базы данных
-- [ ] Дизайн интерфейса (UI/UX)
-- [ ] Разработка базового API на Python
-- [ ] Интеграция Frontend и Backend
+- [x] Проектирование базы данных
+- [x] Дизайн интерфейса (UI/UX)
+- [x] Разработка базового API на Python
+- [x] Интеграция Frontend и Backend
