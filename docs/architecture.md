@@ -75,6 +75,7 @@ AuthService --> DB : доступ к данным
 
 ### Регистрация и Авторизация
 <details>
+[ссылка на диаграмму]((https://docs.yandex.ru/docs/view?url=ya-disk-public%3A%2F%2F7QmsASyCAQyTi6hFC9bH3IlQ3tvMPUN7Dq66hLCHQliU9ZTBH%2BIFW47tMcqHq6Bqq%2FJ6bpmRyOJonT3VoXnDag%3D%3D%3A%2F%D0%AD%D1%82%D0%B0%D0%BF%204.docx&name=%D0%AD%D1%82%D0%B0%D0%BF%204.docx&nosw=1))
 <summary>Посмотреть код: Регистрация (PlantUML)</summary>
 
 ```text
@@ -101,7 +102,6 @@ end
 
 <details>
 <summary>Посмотреть код: Авторизация (PlantUML)</summary>
-(https://docs.yandex.ru/docs/view?url=ya-disk-public%3A%2F%2F7QmsASyCAQyTi6hFC9bH3IlQ3tvMPUN7Dq66hLCHQliU9ZTBH%2BIFW47tMcqHq6Bqq%2FJ6bpmRyOJonT3VoXnDag%3D%3D%3A%2F%D0%AD%D1%82%D0%B0%D0%BF%204.docx&name=%D0%AD%D1%82%D0%B0%D0%BF%204.docx&nosw=1)
 ```text
 @startuml
 actor Пользователь
